@@ -1,71 +1,43 @@
-:root {
-    --primary: #e50914;
-    --bg: #0f0f0f;
-    --card: #1a1a1a;
-    --text: #ffffff;
-    --success: #2ecc71;
-    --danger: #e74c3c;
-    --accent: #3498db;
-}
-
-* { box-sizing: border-box; transition: transform 0.2s ease, background 0.2s ease; }
-
-body {
-    background-color: var(--bg);
-    color: var(--text);
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    margin: 0;
-    padding: 15px;
-}
-
-/* NAVIGATION */
-nav {
+/* POPCORN LOADER */
+#loading-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #222;
+    z-index: 9999;
 }
-.logo { color: var(--primary); font-size: 1.6rem; font-weight: bold; cursor: pointer; }
-.nav-btn { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; }
-.profile-link-btn { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; }
+.loader-content { text-align: center; }
+.popcorn-icon { font-size: 4rem; animation: bounce 0.6s infinite alternate; }
+@keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-20px); } }
 
-/* FINDER UI */
-#filter-card { background: var(--card); padding: 20px; border-radius: 15px; margin-top: 20px; border: 1px solid #222; }
-.genre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-.genre-grid label { background: #222; padding: 10px; border-radius: 8px; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
-select, #generate-btn { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #333; color: white; font-size: 1rem; margin-top: 10px; }
-#generate-btn { background: var(--primary); font-weight: bold; cursor: pointer; }
+/* HOME ROWS */
+.home-row { margin: 30px 0; }
+.home-row h3 { margin-bottom: 10px; font-size: 1.1rem; color: #eee; border-left: 3px solid var(--primary); padding-left: 10px; }
 
-/* MOVIE RESULT CARD (The Design You Liked) */
-.movie-card { background: var(--card); border-radius: 15px; overflow: hidden; margin-top: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.movie-card img { width: 100%; display: block; }
-.movie-info { padding: 20px; }
-.full-overview { color: #ccc; line-height: 1.5; font-size: 0.95rem; margin: 15px 0; }
-
-/* HORIZONTAL RECOMMENDATIONS (The Design You Liked) */
+/* RECS SCROLLER (Shared) */
 .recs { display: flex; gap: 12px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
 .recs::-webkit-scrollbar { display: none; }
-.rec-item { min-width: 110px; text-align: center; cursor: pointer; }
-.rec-item img { width: 100%; border-radius: 6px; border: 1px solid #333; }
-.rec-item p { font-size: 0.75rem; color: #aaa; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rec-item { min-width: 130px; cursor: pointer; transition: 0.3s; }
+.rec-item:active { transform: scale(0.95); }
+.rec-item img { width: 100%; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+.rec-item p { font-size: 0.75rem; color: #888; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* ACTION BUTTONS (The Design You Liked) */
+/* ACTIONS */
 .actions { display: flex; gap: 10px; padding: 15px; }
-.actions button { flex: 1; padding: 15px; border: none; border-radius: 8px; font-weight: bold; color: white; font-size: 0.9rem; cursor: pointer; }
-.like { background: var(--success); }
-.dislike { background: var(--danger); }
-.watchlist-btn { background: var(--accent); }
+.actions button { flex: 1; padding: 14px; border: none; border-radius: 10px; font-weight: bold; color: white; cursor: pointer; }
+.like { background: #27ae60; }
+.watchlist-btn { background: #3498db; }
+.dislike { background: #c0392b; }
 
-/* PROFILE PAGE SPECIFIC */
-.profile-header { display: flex; gap: 15px; margin: 20px 0; }
-.stat-card { flex: 1; background: #1a1a1a; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #333; }
-.stat-card h2 { margin: 0; color: var(--primary); }
-.stat-card p { margin: 0; font-size: 0.8rem; color: #888; }
-
-.movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 15px; }
-.profile-card { background: var(--card); border-radius: 10px; overflow: hidden; border: 1px solid #222; }
-.profile-card img { width: 100%; }
-.profile-card-content { padding: 10px; }
-.profile-card-content h4 { margin: 0; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.delete-btn { width: 100%; background: #333; color: #888; border: none; margin-top: 8px; padding: 5px; border-radius: 4px; font-size: 0.7rem; }
+/* Keep existing root and layout styles... */
+:root { --primary: #e50914; --bg: #0f0f0f; --card: #1a1a1a; --text: #ffffff; }
+body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; }
+nav { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
+.logo { color: var(--primary); font-size: 1.6rem; font-weight: bold; }
+#filter-card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #222; }
+.genre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+.genre-grid label { background: #222; padding: 10px; border-radius: 8px; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+select, #generate-btn { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #333; color: white; margin-top: 10px; }
+#generate-btn { background: var(--primary); font-weight: bold; }

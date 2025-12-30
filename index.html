@@ -7,12 +7,19 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="loading-overlay" style="display:none;">
+        <div class="loader-content">
+            <div class="popcorn-icon">🍿</div>
+            <p>Popping some corn and finding your show...</p>
+        </div>
+    </div>
+
     <nav>
         <div class="logo" onclick="window.location.href='index.html'">Movie Planner</div>
         <div id="auth-section">
             <div id="user-logged-in">
                 <div class="user-controls">
-                    <span id="user-info">Syncing device...</span>
+                    <span id="user-info">Syncing...</span>
                     <button class="profile-link-btn" onclick="window.location.href='profile.html'">My Watchlist</button>
                 </div>
             </div>
@@ -44,17 +51,32 @@
                     <option value="movie-hi">Bollywood Movie</option>
                 </select>
             </div>
-
             <button id="generate-btn">Find Content</button>
         </section>
 
         <section id="result-display"></section>
+
+        <hr style="border: 0; border-top: 1px solid #333; margin: 40px 0;">
+
+        <div id="home-recommendations">
+            <div class="home-row">
+                <h3>Trending K-Dramas</h3>
+                <div id="row-k-drama" class="recs"></div>
+            </div>
+            <div class="home-row">
+                <h3>Popular Anime</h3>
+                <div id="row-anime" class="recs"></div>
+            </div>
+            <div class="home-row">
+                <h3>Top Hollywood Movies</h3>
+                <div id="row-hollywood" class="recs"></div>
+            </div>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    
     <script src="auth.js"></script>
     <script src="api.js"></script>
     <script src="app.js"></script>
