@@ -1,0 +1,13 @@
+body { background: #121212; color: white; font-family: sans-serif; padding: 15px; }
+nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.logo { font-size: 1.5rem; font-weight: bold; color: #e50914; }
+#filter-card { background: #1e1e1e; padding: 20px; border-radius: 10px; }
+.genres { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+select, #generate-btn { width: 100%; padding: 12px; border-radius: 5px; margin-top: 10px; }
+#generate-btn { background: #e50914; color: white; border: none; font-weight: bold; }
+.movie-card { background: #1e1e1e; border-radius: 10px; overflow: hidden; margin-top: 20px; text-align: center; }
+.movie-card img { width: 100%; }
+.actions { display: flex; gap: 10px; padding: 15px; }
+.actions button { flex: 1; padding: 10px; border: none; border-radius: 5px; color: white; }
+.like { background: #27ae60; }
+.dislike { background: #c0392b; }

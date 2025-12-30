@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">Movie Planner</div>
+        <div id="auth-section">
+            <button id="login-btn">Login with Google</button>
+            <span id="user-info"></span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section id="filter-card">
+            <h3>Filters</h3>
+            <div class="genres">
+                <label><input type="checkbox" class="genre-check" value="28"> Action</label>
+                <label><input type="checkbox" class="genre-check" value="18"> Drama</label>
+                <label><input type="checkbox" class="genre-check" value="35"> Comedy</label>
+                <label><input type="checkbox" class="genre-check" value="80"> Thriller</label>
+                <label><input type="checkbox" class="genre-check" value="27"> Horror</label>
+                <label><input type="checkbox" class="genre-check" value="10749"> Romance</label>
+            </div>
+            
+            <select id="language-select">
+                <option value="en">Hollywood (English)</option>
+                <option value="ko">K-Drama (Korean)</option>
+                <option value="zh">C-Drama (Chinese)</option>
+                <option value="hi">Bollywood (Hindi)</option>
+            </select>
+
+            <button id="generate-btn">Find Movie</button>
+        </section>
+
+        <section id="result-display"></section>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <script src="auth.js"></script>
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
