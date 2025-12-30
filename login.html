@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="auth-container">
-        <h1 class="logo" onclick="location.href='index.html'">Movie Planner</h1>
+        <h1 class="logo" onclick="window.location.href='index.html'">Movie Planner</h1>
         
         <div id="login-box">
             <h2>Login</h2>
@@ -16,7 +16,6 @@
             <input type="password" id="login-pass" placeholder="Password">
             <button onclick="handleLogin()">Login</button>
             <p onclick="toggleAuth()">Don't have an account? <b>Sign Up</b></p>
-            <p onclick="forgotPassword()" style="color: gray; font-size: 0.8rem; cursor: pointer;">Forgot Password?</p>
         </div>
 
         <div id="signup-box" style="display:none">

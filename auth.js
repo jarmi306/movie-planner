@@ -7,36 +7,38 @@ const firebaseConfig = {
   appId: "1:141209573472:web:5414792eeaa8f3b3b18b05"
 };
 
+// Initialize Firebase
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-let user = null;
+let currentUser = null;
 
-// Handle Auth State Changes
-auth.onAuthStateChanged(u => {
-    user = u;
+// Auth State Observer
+auth.onAuthStateChanged(user => {
+    currentUser = user;
     const loginForm = document.getElementById('login-form-container');
     const userSection = document.getElementById('user-logged-in');
     const userInfo = document.getElementById('user-info');
     
-    if (u) {
+    if (user) {
         if (loginForm) loginForm.style.display = 'none';
         if (userSection) userSection.style.display = 'flex';
-        if (userInfo) userInfo.innerText = `Hi, ${u.email.split('@')[0]}`;
+        if (userInfo) userInfo.innerText = `Hi, ${user.email.split('@')[0]}`;
     } else {
         if (loginForm) loginForm.style.display = 'flex';
         if (userSection) userSection.style.display = 'none';
     }
 });
 
-// GLOBAL FUNCTIONS FOR BUTTONS
+// EXPLICIT GLOBAL FUNCTIONS
 window.handleLogin = function() {
     const email = document.getElementById('login-email').value;
     const pass = document.getElementById('login-pass').value;
-    if (!email || !pass) return alert("Enter email and password");
+    
+    if (!email || !pass) return alert("Please fill in all fields.");
 
     auth.signInWithEmailAndPassword(email, pass)
         .then(() => { window.location.href = 'index.html'; })
@@ -46,7 +48,8 @@ window.handleLogin = function() {
 window.handleSignup = function() {
     const email = document.getElementById('sig-email').value;
     const pass = document.getElementById('sig-pass').value;
-    if (!email || !pass) return alert("Enter email and password");
+
+    if (!email || !pass) return alert("Please fill in all fields.");
 
     auth.createUserWithEmailAndPassword(email, pass)
         .then(() => { window.location.href = 'index.html'; })
@@ -57,18 +60,24 @@ window.handleLogout = function() {
     auth.signOut().then(() => { window.location.href = 'index.html'; });
 };
 
-// DATA SAVING
-async function saveShow(movie, status) {
-    if (!user) return alert("Please login first!");
-    const title = movie.title || movie.name || "Unknown";
+// Save Show Logic
+window.saveShow = async function(movie, status) {
+    if (!currentUser) return alert("Please login first!");
+
+    const finalTitle = movie.title || movie.name || "Unknown Title";
+    const finalPoster = movie.poster_path || "";
+
     try {
-        await db.collection("users").doc(user.uid).collection("watched").doc(movie.id.toString()).set({
-            title: title,
+        await db.collection("users").doc(currentUser.uid).collection("watched").doc(movie.id.toString()).set({
+            title: finalTitle,
             status: status,
-            poster: movie.poster_path || "",
+            poster: finalPoster,
+            rating: movie.vote_average || 0,
             id: movie.id,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
         alert(`Successfully added to ${status}!`);
-    } catch (e) { alert("Database Error: " + e.message); }
-}
+    } catch (e) {
+        alert("Database Error: " + e.message);
+    }
+};
