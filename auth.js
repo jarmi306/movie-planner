@@ -15,28 +15,27 @@ const db = firebase.firestore();
 
 let user = null;
 
-// Handle Auth State
+// Handle Auth State Changes
 auth.onAuthStateChanged(u => {
     user = u;
+    const loginForm = document.getElementById('login-form-container');
     const userSection = document.getElementById('user-logged-in');
     const userInfo = document.getElementById('user-info');
-    const loginBtn = document.getElementById('login-btn');
     
     if (u) {
-        if (loginBtn) loginBtn.style.display = 'none';
+        if (loginForm) loginForm.style.display = 'none';
         if (userSection) userSection.style.display = 'flex';
         if (userInfo) userInfo.innerText = `Hi, ${u.email.split('@')[0]}`;
     } else {
-        if (loginBtn) loginBtn.style.display = 'block';
+        if (loginForm) loginForm.style.display = 'flex';
         if (userSection) userSection.style.display = 'none';
     }
 });
 
-// GLOBAL FUNCTIONS (Assigned to window so HTML can see them)
+// GLOBAL FUNCTIONS FOR BUTTONS
 window.handleLogin = function() {
     const email = document.getElementById('login-email').value;
     const pass = document.getElementById('login-pass').value;
-    
     if (!email || !pass) return alert("Enter email and password");
 
     auth.signInWithEmailAndPassword(email, pass)
@@ -47,7 +46,6 @@ window.handleLogin = function() {
 window.handleSignup = function() {
     const email = document.getElementById('sig-email').value;
     const pass = document.getElementById('sig-pass').value;
-
     if (!email || !pass) return alert("Enter email and password");
 
     auth.createUserWithEmailAndPassword(email, pass)
@@ -59,17 +57,9 @@ window.handleLogout = function() {
     auth.signOut().then(() => { window.location.href = 'index.html'; });
 };
 
-window.forgotPassword = function() {
-    const email = document.getElementById('login-email').value;
-    if(!email) return alert("Enter email first");
-    auth.sendPasswordResetEmail(email)
-        .then(() => alert("Reset link sent!"))
-        .catch(err => alert(err.message));
-};
-
-// Data Saving Function
+// DATA SAVING
 async function saveShow(movie, status) {
-    if (!user) return alert("Login first!");
+    if (!user) return alert("Please login first!");
     const title = movie.title || movie.name || "Unknown";
     try {
         await db.collection("users").doc(user.uid).collection("watched").doc(movie.id.toString()).set({
@@ -79,6 +69,6 @@ async function saveShow(movie, status) {
             id: movie.id,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
-        alert("Added!");
-    } catch (e) { alert(e.message); }
+        alert(`Successfully added to ${status}!`);
+    } catch (e) { alert("Database Error: " + e.message); }
 }
