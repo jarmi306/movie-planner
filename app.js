@@ -66,10 +66,10 @@ async function showFullDetails(id, type) {
                     </div>
                 </div>
                 <div class="actions">
-                    <button class="like" onclick="saveShow(${JSON.stringify(data).replace(/"/g, '&quot;')}, 'liked')">Like</button>
-                    <button class="watchlist-btn" onclick="saveShow(${JSON.stringify(data).replace(/"/g, '&quot;')}, 'watchlist')">Watchlist</button>
-                    <button class="dislike" onclick="document.getElementById('generate-btn').click()">Skip</button>
-                </div>
+    <button class="like" onclick="saveShow(${JSON.stringify(data).replace(/"/g, '&quot;')}, 'liked')">Like</button>
+    <button class="watchlist-btn" onclick="saveShow(${JSON.stringify(data).replace(/"/g, '&quot;')}, 'watchlist')">Watchlist</button>
+    <button class="dislike" onclick="document.getElementById('generate-btn').click()">Skip</button>
+</div>
             </div>
         `;
     } catch (err) { console.error(err); }

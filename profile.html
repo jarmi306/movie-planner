@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile</title>
+    <title>My Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <nav>
         <div class="logo" onclick="window.location.href='index.html'">Movie Planner</div>
-        <button class="nav-btn" onclick="window.location.href='index.html'">← Back</button>
+        <button class="profile-link-btn" onclick="window.location.href='index.html'">← Back</button>
     </nav>
 
     <div class="container">
@@ -24,10 +24,10 @@
             </div>
         </div>
 
-        <h3>📌 My Watchlist</h3>
+        <h3 style="border-left: 3px solid var(--accent); padding-left: 10px; font-size: 1.1rem;">📌 My Watchlist</h3>
         <div id="watchlist-grid" class="movie-grid"></div>
 
-        <h3 style="margin-top:40px;">🎬 History</h3>
+        <h3 style="border-left: 3px solid var(--primary); padding-left: 10px; font-size: 1.1rem; margin-top: 30px;">🎬 History</h3>
         <div id="history-grid" class="movie-grid"></div>
     </div>
 
@@ -50,7 +50,7 @@
                     const d = doc.data();
                     const card = `
                         <div class="profile-card">
-                            <img src="https://image.tmdb.org/t/p/w200${d.poster}">
+                            <img src="https://image.tmdb.org/t/p/w300${d.poster}" onerror="this.src='https://via.placeholder.com/300x450'">
                             <div class="profile-card-content">
                                 <h4>${d.title}</h4>
                                 <button class="delete-btn" onclick="deleteItem('${doc.id}')">Remove</button>
@@ -62,11 +62,14 @@
                 });
                 document.getElementById('w-count').innerText = wc;
                 document.getElementById('h-count').innerText = hc;
+                
+                if(wc === 0) wGrid.innerHTML = "<p style='color:#555; font-size:0.8rem;'>Empty</p>";
+                if(hc === 0) hGrid.innerHTML = "<p style='color:#555; font-size:0.8rem;'>Empty</p>";
             }
         });
 
         async function deleteItem(id) {
-            if(confirm("Remove this?")) {
+            if(confirm("Remove this item?")) {
                 await db.collection("users").doc(auth.currentUser.uid).collection("watched").doc(id).delete();
                 location.reload();
             }
