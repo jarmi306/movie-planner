@@ -14,20 +14,38 @@ const provider = new firebase.auth.GoogleAuthProvider();
 
 let user = null;
 
+// Handle Redirect Login Result
+auth.getRedirectResult().then((result) => {
+    if (result.user) console.log("Login successful");
+}).catch((error) => console.error("Redirect Error:", error));
+
+// Watch for User Login State
 auth.onAuthStateChanged(u => {
     user = u;
-    document.getElementById('login-btn').style.display = u ? 'none' : 'block';
-    document.getElementById('user-info').innerText = u ? `Hi, ${u.displayName.split(' ')[0]}` : '';
+    const loginBtn = document.getElementById('login-btn');
+    const userInfo = document.getElementById('user-info');
+    if (u) {
+        loginBtn.style.display = 'none';
+        userInfo.innerText = `Hi, ${u.displayName.split(' ')[0]}`;
+    } else {
+        loginBtn.style.display = 'block';
+        userInfo.innerText = '';
+    }
 });
 
-document.getElementById('login-btn').onclick = () => auth.signInWithPopup(provider);
+document.getElementById('login-btn').onclick = () => auth.signInWithRedirect(provider);
 
 async function saveShow(movie, status) {
-    if (!user) return alert("Login first!");
-    await db.collection("users").doc(user.uid).collection("watched").doc(movie.id.toString()).set({
-        title: movie.title,
-        status: status,
-        date: new Date()
-    });
-    alert("Saved!");
+    if (!user) return alert("Please Login first!");
+    try {
+        await db.collection("users").doc(user.uid).collection("watched").doc(movie.id.toString()).set({
+            title: movie.title,
+            status: status,
+            poster: movie.poster_path,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        alert(`Show ${status}!`);
+    } catch (e) {
+        alert("Error saving: " + e.message);
+    }
 }

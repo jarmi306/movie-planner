@@ -1,13 +1,83 @@
-body { background: #121212; color: white; font-family: sans-serif; padding: 15px; }
-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.logo { font-size: 1.5rem; font-weight: bold; color: #e50914; }
-#filter-card { background: #1e1e1e; padding: 20px; border-radius: 10px; }
-.genres { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-select, #generate-btn { width: 100%; padding: 12px; border-radius: 5px; margin-top: 10px; }
-#generate-btn { background: #e50914; color: white; border: none; font-weight: bold; }
-.movie-card { background: #1e1e1e; border-radius: 10px; overflow: hidden; margin-top: 20px; text-align: center; }
-.movie-card img { width: 100%; }
-.actions { display: flex; gap: 10px; padding: 15px; }
-.actions button { flex: 1; padding: 10px; border: none; border-radius: 5px; color: white; }
+:root {
+    --primary: #e50914;
+    --bg: #121212;
+    --card: #1e1e1e;
+}
+
+body {
+    background-color: var(--bg);
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 15px;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0 20px 0;
+}
+
+.logo { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
+
+#filter-card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.genres {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+select, #generate-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    margin-top: 10px;
+    font-size: 1rem;
+}
+
+#generate-btn {
+    background: var(--primary);
+    color: white;
+    font-weight: bold;
+}
+
+.movie-card {
+    background: var(--card);
+    border-radius: 15px;
+    overflow: hidden;
+    margin-top: 25px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.movie-card img { width: 100%; display: block; }
+
+.movie-info { padding: 15px; }
+
+.actions {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+}
+
+.actions button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+}
+
 .like { background: #27ae60; }
 .dislike { background: #c0392b; }
+
+#user-info { font-weight: bold; color: var(--primary); }
