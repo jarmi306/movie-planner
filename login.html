@@ -8,15 +8,15 @@
 </head>
 <body>
     <div class="auth-container">
-        <h1 class="logo">Movie Planner</h1>
+        <h1 class="logo" onclick="location.href='index.html'">Movie Planner</h1>
         
         <div id="login-box">
             <h2>Login</h2>
             <input type="email" id="login-email" placeholder="Email">
             <input type="password" id="login-pass" placeholder="Password">
             <button id="do-login">Login</button>
-            <p onclick="toggleAuth()">Don't have an account? Sign Up</p>
-            <p onclick="forgotPassword()" style="color: gray; font-size: 0.8rem;">Forgot Password?</p>
+            <p onclick="toggleAuth()">Don't have an account? <b>Sign Up</b></p>
+            <p onclick="forgotPassword()" style="color: gray; font-size: 0.8rem; cursor: pointer;">Forgot Password?</p>
         </div>
 
         <div id="signup-box" style="display:none">
@@ -24,13 +24,14 @@
             <input type="email" id="sig-email" placeholder="Email">
             <input type="password" id="sig-pass" placeholder="Password">
             <button id="do-signup">Create Account</button>
-            <p onclick="toggleAuth()">Already have an account? Login</p>
+            <p onclick="toggleAuth()">Already have an account? <b>Login</b></p>
         </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="auth.js"></script>
+    
     <script>
         function toggleAuth() {
             const l = document.getElementById('login-box');

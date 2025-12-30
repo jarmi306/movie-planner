@@ -7,7 +7,6 @@ const firebaseConfig = {
   appId: "1:141209573472:web:5414792eeaa8f3b3b18b05"
 };
 
-// Initialize Firebase safely
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
@@ -16,7 +15,6 @@ const db = firebase.firestore();
 
 let user = null;
 
-// Handle Auth State Changes
 auth.onAuthStateChanged(u => {
     user = u;
     const loginForm = document.getElementById('login-form-container');
@@ -33,45 +31,43 @@ auth.onAuthStateChanged(u => {
     }
 });
 
-// Helper: Redirect to Login Page if on Index
-function goToLoginPage() {
-    window.location.href = 'login.html';
-}
-
-// Global Click Handler for Buttons
 document.addEventListener('click', (e) => {
     const id = e.target.id;
-    
-    // If on Index page, the "Login / Sign Up" button should just take you to login.html
-    if (id === 'login-btn' && window.location.pathname.includes('index.html')) {
-        goToLoginPage();
+
+    // 1. Home Page Login Button -> Redirects to login page
+    if (id === 'login-btn') {
+        window.location.href = 'login.html';
     }
-    
-    // Actual Login Logic (Used in login.html)
+
+    // 2. Login Page - Execute Login
     if (id === 'do-login') {
         const email = document.getElementById('login-email').value;
         const pass = document.getElementById('login-pass').value;
+        if (!email || !pass) return alert("Please enter email and password");
+        
         auth.signInWithEmailAndPassword(email, pass)
             .then(() => window.location.href = 'index.html')
             .catch(err => alert("Login Error: " + err.message));
     }
 
-    // Actual Signup Logic (Used in login.html)
+    // 3. Login Page - Execute Signup
     if (id === 'do-signup') {
         const email = document.getElementById('sig-email').value;
         const pass = document.getElementById('sig-pass').value;
+        if (!email || !pass) return alert("Please fill in both fields");
+        
         auth.createUserWithEmailAndPassword(email, pass)
             .then(() => window.location.href = 'index.html')
             .catch(err => alert("Signup Error: " + err.message));
     }
 
-    // Logout
+    // 4. Logout
     if (id === 'logout-btn') {
         auth.signOut().then(() => window.location.href = 'index.html');
     }
 });
 
-// Normalize and Save Data
+// Normalized Save Function
 async function saveShow(movie, status) {
     if (!user) return alert("Please login first!");
     const finalTitle = movie.title || movie.name || "Unknown Title";
@@ -86,7 +82,7 @@ async function saveShow(movie, status) {
             id: movie.id,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
-        alert(`Successfully added to ${status}!`);
+        alert(`Added to ${status}!`);
     } catch (e) {
         alert("Database Error: " + e.message);
     }
