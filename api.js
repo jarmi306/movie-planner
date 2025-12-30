@@ -4,25 +4,35 @@ async function getMovie(genres, selection) {
     const [type, lang] = selection.split('-'); 
     const endpoint = type === 'tv' ? 'discover/tv' : 'discover/movie';
     
-    // Attempt 1: Strict Match (All selected genres)
-    let genreString = genres.join(',');
-    let result = await fetchFromTMDB(endpoint, genreString, lang);
+    // Safety & Modern Filters
+    const currentDate = new Date().toISOString().split('T')[0]; // 2025-12-30
+    const adultFilter = "&include_adult=false";
+    const modernFilter = "&primary_release_date.gte=2010-01-01&first_air_date.gte=2010-01-01";
+    
+    // If it's Anime (tv-ja), we MUST include the Animation genre (16)
+    let finalGenres = [...genres];
+    if (selection === 'tv-ja' && !finalGenres.includes('16')) {
+        finalGenres.push('16');
+    }
 
-    // Attempt 2: Relaxed Match (If Attempt 1 failed and you chose multiple genres)
-    if (!result && genres.length > 1) {
-        console.log("No strict match found. Relaxing filters...");
-        // Pick one genre at random from your selection to find a 'closest' result
-        const fallbackGenre = genres[Math.floor(Math.random() * genres.length)];
-        result = await fetchFromTMDB(endpoint, fallbackGenre, lang);
+    let genreString = finalGenres.join(',');
+
+    // Attempt 1: Modern & Strict (Post-2010)
+    let result = await fetchFromTMDB(endpoint, genreString, lang, modernFilter + adultFilter);
+
+    // Attempt 2: Relaxed (If no modern match, look for older classics)
+    if (!result) {
+        console.log("No modern match found. Expanding search...");
+        result = await fetchFromTMDB(endpoint, genreString, lang, adultFilter);
     }
 
     return result;
 }
 
-// Helper function to handle the actual API call
-async function fetchFromTMDB(endpoint, genreIds, lang) {
-    const randomPage = Math.floor(Math.random() * 3) + 1;
-    const url = `https://api.themoviedb.org/3/${endpoint}?api_key=${TMDB_KEY}&with_genres=${genreIds}&with_original_language=${lang}&page=${randomPage}&sort_by=popularity.desc`;
+async function fetchFromTMDB(endpoint, genreIds, lang, extraFilters) {
+    // We search across the first 5 pages to get a mix of popularity and hidden gems
+    const randomPage = Math.floor(Math.random() * 5) + 1;
+    const url = `https://api.themoviedb.org/3/${endpoint}?api_key=${TMDB_KEY}&with_genres=${genreIds}&with_original_language=${lang}&page=${randomPage}&sort_by=popularity.desc${extraFilters}`;
 
     try {
         const response = await fetch(url);
@@ -30,8 +40,6 @@ async function fetchFromTMDB(endpoint, genreIds, lang) {
         
         if (data.results && data.results.length > 0) {
             const item = data.results[Math.floor(Math.random() * data.results.length)];
-            const [type] = endpoint.split('/').reverse(); // gets 'tv' or 'movie'
-            
             return {
                 id: item.id,
                 title: item.title || item.name,
@@ -44,7 +52,6 @@ async function fetchFromTMDB(endpoint, genreIds, lang) {
         }
         return null;
     } catch (err) {
-        console.error("TMDB Error:", err);
         return null;
     }
 }
