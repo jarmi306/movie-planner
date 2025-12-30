@@ -93,4 +93,20 @@ async function saveShow(movie, status) {
         console.error("Firestore Error:", e);
         alert("Database Error: " + e.message);
     }
+    // Add to auth.js
+function checkNavigation() {
+    const currentPage = window.location.pathname;
+    
+    auth.onAuthStateChanged(u => {
+        // If on the profile page but not logged in, send to login
+        if (currentPage.includes('profile.html') && !u) {
+            window.location.href = 'login.html';
+        }
+        // If on the login page but already logged in, send to index
+        if (currentPage.includes('login.html') && u) {
+            window.location.href = 'index.html';
+        }
+    });
+}
+checkNavigation();
 }
