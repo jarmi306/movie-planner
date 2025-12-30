@@ -101,3 +101,36 @@ select {
 .recs::-webkit-scrollbar { display: none; }
 .rec-item { min-width: 120px; cursor: pointer; }
 .rec-item img { width: 100%; border-radius: 8px; height: 170px; object-fit: cover; }
+/* Profile Specific Smart Tweaks */
+.row-title {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    border-left: 3px solid var(--accent);
+    padding-left: 10px;
+}
+.history-title { border-color: var(--primary); }
+
+.profile-recs {
+    padding-bottom: 20px !important;
+}
+
+.profile-item {
+    min-width: 140px !important; /* Larger posters for the dashboard */
+}
+
+.profile-item p {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.empty-msg {
+    color: #444;
+    padding: 20px;
+    font-style: italic;
+}
+
+.loading-msg {
+    color: var(--primary);
+    padding: 20px;
+}

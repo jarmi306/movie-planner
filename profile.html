@@ -16,25 +16,25 @@
         <header class="profile-header">
             <div class="stat-card">
                 <h2 id="w-count">0</h2>
-                <p>Watchlist</p>
+                <p>In Watchlist</p>
             </div>
             <div class="stat-card">
                 <h2 id="h-count">0</h2>
-                <p>Rated History</p>
+                <p>Shows Rated</p>
             </div>
         </header>
 
         <section class="profile-section">
-            <h3 style="border-left: 4px solid var(--accent); padding-left: 12px; margin-bottom: 20px;">📌 My Watchlist</h3>
-            <div id="watchlist-grid" class="movie-grid">
-                <p style="color: #444;">Syncing your list...</p>
+            <h3 class="row-title">📌 My Watchlist</h3>
+            <div id="watchlist-row" class="recs profile-recs">
+                <p class="loading-msg">Syncing...</p>
             </div>
         </section>
 
-        <section class="profile-section" style="margin-top: 40px;">
-            <h3 style="border-left: 4px solid var(--primary); padding-left: 12px; margin-bottom: 20px;">🎬 History</h3>
-            <div id="history-grid" class="movie-grid">
-                <p style="color: #444;">Loading history...</p>
+        <section class="profile-section" style="margin-top: 30px;">
+            <h3 class="row-title history-title">🎬 History</h3>
+            <div id="history-row" class="recs profile-recs">
+                <p class="loading-msg">Syncing...</p>
             </div>
         </section>
     </div>
@@ -47,58 +47,48 @@
     <script>
         auth.onAuthStateChanged(async (u) => {
             if (u) {
-                const wGrid = document.getElementById('watchlist-grid');
-                const hGrid = document.getElementById('history-grid');
+                const wRow = document.getElementById('watchlist-row');
+                const hRow = document.getElementById('history-row');
                 
-                // Fetch data ordered by most recent first
+                // Fetching all interactions from Firestore
                 const snapshot = await db.collection("users").doc(u.uid).collection("watched")
                                    .orderBy("timestamp", "desc").get();
                 
                 let wc = 0, hc = 0;
-                wGrid.innerHTML = ""; 
-                hGrid.innerHTML = "";
+                wRow.innerHTML = ""; 
+                hRow.innerHTML = "";
 
                 snapshot.forEach(doc => {
                     const d = doc.data();
-                    const card = `
-                        <div class="profile-card">
-                            <div class="card-img-container">
-                                <img src="https://image.tmdb.org/t/p/w300${d.poster}" onerror="this.src='https://via.placeholder.com/300x450'">
-                            </div>
-                            <div class="profile-card-content">
-                                <h4>${d.title}</h4>
-                                <button class="delete-btn" onclick="deleteItem('${doc.id}')">Remove</button>
-                            </div>
+                    const itemHTML = `
+                        <div class="rec-item profile-item">
+                            <img src="https://image.tmdb.org/t/p/w300${d.poster}" onerror="this.src='https://via.placeholder.com/300x450'">
+                            <p>${d.title}</p>
+                            <button class="delete-btn" onclick="deleteItem('${doc.id}')">Remove</button>
                         </div>
                     `;
                     
                     if(d.status === 'watchlist') {
-                        wGrid.innerHTML += card;
+                        wRow.innerHTML += itemHTML;
                         wc++;
                     } else {
-                        hGrid.innerHTML += card;
+                        hRow.innerHTML += itemHTML;
                         hc++;
                     }
                 });
 
-                // Update Stat Numbers
                 document.getElementById('w-count').innerText = wc;
                 document.getElementById('h-count').innerText = hc;
 
-                // Empty state handling
-                if(wc === 0) wGrid.innerHTML = "<p style='color:#666; font-style:italic;'>Your watchlist is empty.</p>";
-                if(hc === 0) hGrid.innerHTML = "<p style='color:#666; font-style:italic;'>No history recorded yet.</p>";
+                if(wc === 0) wRow.innerHTML = "<p class='empty-msg'>Empty</p>";
+                if(hc === 0) hRow.innerHTML = "<p class='empty-msg'>Empty</p>";
             }
         });
 
         async function deleteItem(id) {
-            if(confirm("Are you sure you want to remove this?")) {
-                try {
-                    await db.collection("users").doc(auth.currentUser.uid).collection("watched").doc(id).delete();
-                    location.reload();
-                } catch (e) {
-                    alert("Error deleting item: " + e.message);
-                }
+            if(confirm("Remove this from your dashboard?")) {
+                await db.collection("users").doc(auth.currentUser.uid).collection("watched").doc(id).delete();
+                location.reload();
             }
         }
     </script>
