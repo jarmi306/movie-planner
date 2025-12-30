@@ -8,110 +8,64 @@
     --accent: #3498db;
 }
 
-* { box-sizing: border-box; transition: all 0.3s ease; }
+* { box-sizing: border-box; transition: transform 0.2s ease, background 0.2s ease; }
 
 body {
     background-color: var(--bg);
     color: var(--text);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 15px;
 }
 
+/* NAVIGATION */
 nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-bottom: 20px;
+    border-bottom: 1px solid #222;
 }
+.logo { color: var(--primary); font-size: 1.6rem; font-weight: bold; cursor: pointer; }
+.nav-btn { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; }
+.profile-link-btn { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; }
 
-.logo { color: var(--primary); font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; cursor: pointer; }
+/* FINDER UI */
+#filter-card { background: var(--card); padding: 20px; border-radius: 15px; margin-top: 20px; border: 1px solid #222; }
+.genre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+.genre-grid label { background: #222; padding: 10px; border-radius: 8px; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+select, #generate-btn { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #333; color: white; font-size: 1rem; margin-top: 10px; }
+#generate-btn { background: var(--primary); font-weight: bold; cursor: pointer; }
 
-/* PROFILE HEADER */
-.profile-header {
-    display: flex;
-    gap: 15px;
-    margin: 20px 0;
-}
+/* MOVIE RESULT CARD (The Design You Liked) */
+.movie-card { background: var(--card); border-radius: 15px; overflow: hidden; margin-top: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.movie-card img { width: 100%; display: block; }
+.movie-info { padding: 20px; }
+.full-overview { color: #ccc; line-height: 1.5; font-size: 0.95rem; margin: 15px 0; }
 
-.stat-card {
-    flex: 1;
-    background: linear-gradient(145deg, #222, #111);
-    padding: 20px;
-    border-radius: 15px;
-    text-align: center;
-    border: 1px solid #333;
-}
+/* HORIZONTAL RECOMMENDATIONS (The Design You Liked) */
+.recs { display: flex; gap: 12px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
+.recs::-webkit-scrollbar { display: none; }
+.rec-item { min-width: 110px; text-align: center; cursor: pointer; }
+.rec-item img { width: 100%; border-radius: 6px; border: 1px solid #333; }
+.rec-item p { font-size: 0.75rem; color: #aaa; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.stat-card h2 { margin: 0; font-size: 2rem; color: var(--primary); }
-.stat-card p { margin: 5px 0 0; color: #888; font-size: 0.9rem; }
+/* ACTION BUTTONS (The Design You Liked) */
+.actions { display: flex; gap: 10px; padding: 15px; }
+.actions button { flex: 1; padding: 15px; border: none; border-radius: 8px; font-weight: bold; color: white; font-size: 0.9rem; cursor: pointer; }
+.like { background: var(--success); }
+.dislike { background: var(--danger); }
+.watchlist-btn { background: var(--accent); }
 
-/* SECTIONS */
-.profile-section { margin-bottom: 40px; }
-.section-header { margin-bottom: 15px; border-left: 4px solid var(--primary); padding-left: 15px; }
-.section-header h3 { margin: 0; font-size: 1.3rem; }
-.section-header p { margin: 0; color: #666; font-size: 0.8rem; }
+/* PROFILE PAGE SPECIFIC */
+.profile-header { display: flex; gap: 15px; margin: 20px 0; }
+.stat-card { flex: 1; background: #1a1a1a; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #333; }
+.stat-card h2 { margin: 0; color: var(--primary); }
+.stat-card p { margin: 0; font-size: 0.8rem; color: #888; }
 
-/* PROFILE CARDS */
-.movie-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 20px;
-}
-
-.profile-card {
-    background: var(--card);
-    border-radius: 12px;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
-
-.profile-card:hover { transform: translateY(-5px); }
-
-.card-img-container { position: relative; }
-.card-img-container img { width: 100%; display: block; }
-
-.card-badge {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    padding: 4px 8px;
-    font-size: 0.65rem;
-    font-weight: bold;
-    border-radius: 4px;
-    text-transform: uppercase;
-}
-
-.status-liked { background: var(--success); }
-.status-disliked { background: var(--danger); }
-.status-watchlist { background: var(--accent); }
-
-.card-content { padding: 12px; }
-.card-content h4 { 
-    margin: 0 0 10px; 
-    font-size: 0.9rem; 
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-}
-
-.delete-btn {
-    width: 100%;
-    background: transparent;
-    border: 1px solid #444;
-    color: #888;
-    padding: 6px;
-    font-size: 0.75rem;
-    border-radius: 4px;
-}
-
-.delete-btn:hover { background: var(--danger); color: white; border-color: var(--danger); }
-
-/* EXISTING FINDER UI FIXES */
-#filter-card { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid #222; }
-.genre-grid label { background: #222; padding: 10px; border-radius: 10px; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
-#generate-btn { background: var(--primary); height: 50px; font-size: 1.1rem; border-radius: 12px; margin-top: 20px; }
-
-/* LOADING/EMPTY STATE */
-.empty-msg { color: #555; font-style: italic; padding: 20px 0; }
+.movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 15px; }
+.profile-card { background: var(--card); border-radius: 10px; overflow: hidden; border: 1px solid #222; }
+.profile-card img { width: 100%; }
+.profile-card-content { padding: 10px; }
+.profile-card-content h4 { margin: 0; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.delete-btn { width: 100%; background: #333; color: #888; border: none; margin-top: 8px; padding: 5px; border-radius: 4px; font-size: 0.7rem; }

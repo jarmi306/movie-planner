@@ -5,14 +5,14 @@ genBtn.onclick = async () => {
     const selectedGenres = Array.from(document.querySelectorAll('.genre-check:checked')).map(el => el.value);
     const selection = document.getElementById('language-select').value;
     
-    display.innerHTML = "<div style='text-align:center; padding:20px;'>Finding accurate results...</div>";
+    display.innerHTML = "<div class='loading-text' style='text-align:center; padding:40px; color:var(--primary); font-weight:bold;'>Finding matches...</div>";
     
     const content = await getMovie(selectedGenres, selection);
     
     if (content) {
         showFullDetails(content.id, content.media_type);
     } else {
-        display.innerHTML = "<p style='text-align:center'>No results found. Try fewer filters!</p>";
+        display.innerHTML = "<p style='text-align:center; padding:20px;'>No results found. Try fewer filters!</p>";
     }
 };
 
@@ -32,12 +32,11 @@ async function showFullDetails(id, type) {
                     <p style="color:var(--primary); font-weight:bold;">${data.release_date || data.first_air_date} | ⭐ ${data.vote_average.toFixed(1)}</p>
                     <p class="full-overview">${data.overview}</p>
                     
-                    ${trailer ? `<button onclick="window.open('https://youtube.com/watch?v=${trailer.key}')" style="background:#ff0000; margin-bottom:15px;">Watch Trailer</button>` : ''}
+                    ${trailer ? `<button onclick="window.open('https://youtube.com/watch?v=${trailer.key}')" style="background:#ff0000; border:none; color:white; padding:10px; border-radius:5px; width:100%; margin-bottom:15px; font-weight:bold;">Watch Trailer</button>` : ''}
 
-                    <hr>
                     <h3>Similar Recommendations</h3>
                     <div class="recs">
-                        ${data.recommendations.results.slice(0, 6).map(r => `
+                        ${data.recommendations.results.slice(0, 8).map(r => `
                             <div class="rec-item" onclick="showFullDetails(${r.id}, '${type}')">
                                 <img src="https://image.tmdb.org/t/p/w200${r.poster_path}">
                                 <p>${r.title || r.name}</p>

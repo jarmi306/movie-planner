@@ -3,46 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile - Movie Planner</title>
+    <title>My Profile</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="profile-page">
+<body>
     <nav>
         <div class="logo" onclick="window.location.href='index.html'">Movie Planner</div>
-        <button class="nav-btn" onclick="window.location.href='index.html'">← Back to Finder</button>
+        <button class="nav-btn" onclick="window.location.href='index.html'">← Back</button>
     </nav>
 
     <div class="container">
-        <header class="profile-header">
+        <div class="profile-header">
             <div class="stat-card">
-                <h2 id="watchlist-count">0</h2>
+                <h2 id="w-count">0</h2>
                 <p>Watchlist</p>
             </div>
             <div class="stat-card">
-                <h2 id="history-count">0</h2>
-                <p>Watched</p>
+                <h2 id="h-count">0</h2>
+                <p>Rated</p>
             </div>
-        </header>
+        </div>
 
-        <section class="profile-section">
-            <div class="section-header">
-                <h3>📌 My Watchlist</h3>
-                <p>Shows you want to see</p>
-            </div>
-            <div id="watchlist-grid" class="movie-grid">
-                <div class="loader-placeholder">Syncing...</div>
-            </div>
-        </section>
+        <h3>📌 My Watchlist</h3>
+        <div id="watchlist-grid" class="movie-grid"></div>
 
-        <section class="profile-section">
-            <div class="section-header">
-                <h3>🎬 History</h3>
-                <p>Shows you've already rated</p>
-            </div>
-            <div id="history-grid" class="movie-grid">
-                <div class="loader-placeholder">Syncing...</div>
-            </div>
-        </section>
+        <h3 style="margin-top:40px;">🎬 History</h3>
+        <div id="history-grid" class="movie-grid"></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -53,55 +39,34 @@
     <script>
         auth.onAuthStateChanged(async (u) => {
             if (u) {
-                const watchlistDiv = document.getElementById('watchlist-grid');
-                const historyDiv = document.getElementById('history-grid');
+                const wGrid = document.getElementById('watchlist-grid');
+                const hGrid = document.getElementById('history-grid');
+                const snapshot = await db.collection("users").doc(u.uid).collection("watched").get();
                 
-                const snapshot = await db.collection("users").doc(u.uid).collection("watched")
-                                   .orderBy("timestamp", "desc").get();
-                
-                watchlistDiv.innerHTML = "";
-                historyDiv.innerHTML = "";
-
-                let wCount = 0;
-                let hCount = 0;
+                let wc = 0, hc = 0;
+                wGrid.innerHTML = ""; hGrid.innerHTML = "";
 
                 snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const statusClass = data.status === 'liked' ? 'status-liked' : 
-                                       (data.status === 'disliked' ? 'status-disliked' : 'status-watchlist');
-                    
+                    const d = doc.data();
                     const card = `
                         <div class="profile-card">
-                            <div class="card-img-container">
-                                <img src="https://image.tmdb.org/t/p/w300${data.poster}" onerror="this.src='https://via.placeholder.com/300x450'">
-                                <div class="card-badge ${statusClass}">${data.status.toUpperCase()}</div>
-                            </div>
-                            <div class="card-content">
-                                <h4>${data.title}</h4>
+                            <img src="https://image.tmdb.org/t/p/w200${d.poster}">
+                            <div class="profile-card-content">
+                                <h4>${d.title}</h4>
                                 <button class="delete-btn" onclick="deleteItem('${doc.id}')">Remove</button>
                             </div>
                         </div>
                     `;
-
-                    if(data.status === 'watchlist') {
-                        watchlistDiv.innerHTML += card;
-                        wCount++;
-                    } else {
-                        historyDiv.innerHTML += card;
-                        hCount++;
-                    }
+                    if(d.status === 'watchlist') { wGrid.innerHTML += card; wc++; }
+                    else { hGrid.innerHTML += card; hc++; }
                 });
-
-                document.getElementById('watchlist-count').innerText = wCount;
-                document.getElementById('history-count').innerText = hCount;
-
-                if(wCount === 0) watchlistDiv.innerHTML = "<p class='empty-msg'>Nothing in your watchlist yet.</p>";
-                if(hCount === 0) historyDiv.innerHTML = "<p class='empty-msg'>No history found.</p>";
+                document.getElementById('w-count').innerText = wc;
+                document.getElementById('h-count').innerText = hc;
             }
         });
 
         async function deleteItem(id) {
-            if(confirm("Remove this from your list?")) {
+            if(confirm("Remove this?")) {
                 await db.collection("users").doc(auth.currentUser.uid).collection("watched").doc(id).delete();
                 location.reload();
             }
