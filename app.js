@@ -1,88 +1,65 @@
 const genBtn = document.getElementById('generate-btn');
 const display = document.getElementById('result-display');
 
-/**
- * Main function to generate a movie based on filters
- */
 genBtn.onclick = async () => {
     const selectedGenres = Array.from(document.querySelectorAll('.genre-check:checked')).map(el => el.value);
-    const lang = document.getElementById('language-select').value;
+    const selection = document.getElementById('language-select').value;
     
-    display.innerHTML = "<div style='text-align:center; padding:20px;'>Searching the globe for a hit...</div>";
+    display.innerHTML = "<div class='loading-text'>Finding accurate matches...</div>";
     
-    const movie = await getMovie(selectedGenres, lang);
+    const content = await getMovie(selectedGenres, selection);
     
-    if (movie) {
-        // Instead of just showing a card, we fetch deep details immediately
-        showFullDetails(movie.id);
+    if (content) {
+        showFullDetails(content.id, content.media_type);
     } else {
-        display.innerHTML = "<p style='text-align:center'>No movies found. Try selecting fewer filters!</p>";
+        display.innerHTML = "<p>No results found for these filters. Try adding more genres!</p>";
     }
 };
 
-/**
- * Fetches expanded details, cast, and recommendations from TMDB
- */
-async function showFullDetails(movieId) {
-    display.innerHTML = "<div style='text-align:center; padding:20px;'>Loading full details...</div>";
-    
-    const detailsUrl = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_KEY}&append_to_response=recommendations,credits`;
+async function showFullDetails(id, type) {
+    // Correctly routing the details request based on Movie or TV
+    const detailsUrl = `https://api.themoviedb.org/3/${type}/${id}?api_key=${TMDB_KEY}&append_to_response=recommendations,credits`;
     
     try {
         const res = await fetch(detailsUrl);
-        const movie = await res.json();
+        const data = await res.json();
 
-        // Build the expanded interface
         display.innerHTML = `
-            <div class="movie-card full-detail">
-                <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" onerror="this.src='https://via.placeholder.com/500x750?text=No+Poster'">
-                
+            <div class="movie-card">
+                <img src="https://image.tmdb.org/t/p/w500${data.poster_path}" onerror="this.src='https://via.placeholder.com/500x750'">
                 <div class="movie-info">
-                    <h2 style="margin-bottom:5px;">${movie.title}</h2>
-                    <p style="color: #e50914; font-weight: bold; margin-bottom: 15px;">
-                        ${movie.release_date ? movie.release_date.split('-')[0] : 'N/A'} | ⭐ ${movie.vote_average.toFixed(1)}/10 | ${movie.runtime} mins
-                    </p>
+                    <h2>${data.title || data.name}</h2>
+                    <p class="meta">${data.release_date || data.first_air_date} | ⭐ ${data.vote_average.toFixed(1)}</p>
+                    <p class="full-overview">${data.overview}</p>
                     
-                    <p><strong>Genres:</strong> ${movie.genres.map(g => g.name).join(', ')}</p>
-                    
-                    <h3>Overview</h3>
-                    <p class="full-overview">${movie.overview || "No description available."}</p>
-                    
-                    <h3>Top Cast</h3>
-                    <p style="color: #ccc;">${movie.credits.cast.slice(0, 5).map(c => c.name).join(', ')}</p>
+                    <h3>Cast</h3>
+                    <p class="cast-list">${data.credits.cast.slice(0, 5).map(c => c.name).join(', ')}</p>
 
-                    <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
-
-                    <h3>If you liked this, you'll like:</h3>
+                    <hr>
+                    <h3>Similar Recommendations</h3>
                     <div class="recs">
-                        ${movie.recommendations.results.length > 0 ? 
-                            movie.recommendations.results.slice(0, 4).map(r => `
-                                <div class="rec-item" onclick="showFullDetails(${r.id})">
-                                    <img src="https://image.tmdb.org/t/p/w200${r.poster_path}" onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
-                                    <p>${r.title.length > 20 ? r.title.substring(0, 17) + '...' : r.title}</p>
-                                </div>
-                            `).join('') : '<p>No recommendations found.</p>'
-                        }
+                        ${data.recommendations.results.slice(0, 5).map(r => `
+                            <div class="rec-item" onclick="showFullDetails(${r.id}, '${type}')">
+                                <img src="https://image.tmdb.org/t/p/w200${r.poster_path}">
+                                <p>${r.title || r.name}</p>
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
-
                 <div class="actions">
-                    <button class="like" id="btn-like">Liked It</button>
-                    <button class="watchlist-btn" id="btn-watch" style="background:#3498db">Watchlist</button>
-                    <button class="dislike" id="btn-dislike">Disliked</button>
+                    <button class="like" id="btn-like">Like</button>
+                    <button class="watchlist-btn" id="btn-watch">Watchlist</button>
+                    <button class="dislike" id="btn-dislike">Skip</button>
                 </div>
-                
-                <button onclick="window.scrollTo(0,0)" style="background:none; color:#666; font-size:0.8rem; margin-top:10px; border:none;">Back to Top</button>
             </div>
         `;
 
-        // Attach event listeners for saving
-        document.getElementById('btn-like').onclick = () => saveShow(movie, 'liked');
-        document.getElementById('btn-watch').onclick = () => saveShow(movie, 'watchlist');
-        document.getElementById('btn-dislike').onclick = () => saveShow(movie, 'disliked');
+        // Save functions
+        document.getElementById('btn-like').onclick = () => saveShow(data, 'liked');
+        document.getElementById('btn-watch').onclick = () => saveShow(data, 'watchlist');
+        document.getElementById('btn-dislike').onclick = () => genBtn.click();
 
     } catch (err) {
-        console.error("Error loading details:", err);
-        display.innerHTML = "<p>Error loading movie details. Please try again.</p>";
+        display.innerHTML = "<p>Error loading details. Please try again.</p>";
     }
 }
