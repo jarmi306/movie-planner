@@ -15,23 +15,20 @@ const db = firebase.firestore();
 
 let currentUser = null;
 
-// AUTO-LOGIN LOGIC
+// Automatic Device Login
 auth.onAuthStateChanged(user => {
     if (user) {
         currentUser = user;
-        const userInfo = document.getElementById('user-info');
-        if (userInfo) userInfo.innerText = "Device Account Active";
-        console.log("Logged in as:", user.uid);
+        const info = document.getElementById('user-info');
+        if (info) info.innerText = "Device Sync Active";
     } else {
-        // If no account, create one anonymously right now
-        auth.signInAnonymously()
-            .catch(error => console.error("Anonymous Auth Error:", error));
+        auth.signInAnonymously().catch(e => console.error("Auth Error", e));
     }
 });
 
-// SAVE FUNCTION (Still works the same!)
+// Normalized Save Function
 window.saveShow = async function(movie, status) {
-    if (!currentUser) return alert("Still connecting to device account...");
+    if (!currentUser) return alert("Connecting to device account...");
 
     const finalTitle = movie.title || movie.name || "Unknown Title";
     const finalPoster = movie.poster_path || "";
@@ -45,7 +42,7 @@ window.saveShow = async function(movie, status) {
             id: movie.id,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
-        alert(`Successfully added to ${status}!`);
+        alert(`Added to ${status}!`);
     } catch (e) {
         alert("Database Error: " + e.message);
     }
