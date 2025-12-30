@@ -10,7 +10,7 @@
     <div id="loading-overlay" style="display:none;">
         <div class="loader-content">
             <div class="popcorn-icon">🍿</div>
-            <p>Popping some corn and finding your show...</p>
+            <p>Popping some corn...</p>
         </div>
     </div>
 
@@ -19,8 +19,8 @@
         <div id="auth-section">
             <div id="user-logged-in">
                 <div class="user-controls">
-                    <span id="user-info">Syncing...</span>
-                    <button class="profile-link-btn" onclick="window.location.href='profile.html'">My Watchlist</button>
+                    <span id="user-info">Connecting...</span>
+                    <button class="profile-link-btn" onclick="window.location.href='profile.html'">My Dashboard</button>
                 </div>
             </div>
         </div>
@@ -30,33 +30,32 @@
         <section id="filter-card">
             <h3>Find Your Next Show</h3>
             <div class="genre-grid">
-                <label><input type="checkbox" class="genre-check" value="28"> Action</label>
-                <label><input type="checkbox" class="genre-check" value="18"> Drama</label>
-                <label><input type="checkbox" class="genre-check" value="35"> Comedy</label>
-                <label><input type="checkbox" class="genre-check" value="10749"> Romance</label>
-                <label><input type="checkbox" class="genre-check" value="27"> Horror</label>
-                <label><input type="checkbox" class="genre-check" value="16"> Animation/Anime</label>
+                <label class="smart-label"><input type="checkbox" class="genre-check" value="28"> <span>Action</span></label>
+                <label class="smart-label"><input type="checkbox" class="genre-check" value="18"> <span>Drama</span></label>
+                <label class="smart-label"><input type="checkbox" class="genre-check" value="35"> <span>Comedy</span></label>
+                <label class="smart-label"><input type="checkbox" class="genre-check" value="10749"> <span>Romance</span></label>
+                <label class="smart-label"><input type="checkbox" class="genre-check" value="27"> <span>Horror</span></label>
+                <label class="smart-label"><input type="checkbox" class="genre-check" value="16"> <span>Anime</span></label>
             </div>
             
             <div class="select-group">
-                <label for="language-select">Format & Region:</label>
+                <label for="language-select">Format & Region</label>
                 <select id="language-select">
                     <option value="movie-en">Hollywood Movie</option>
                     <option value="tv-en">English Series</option>
-                    <option value="tv-ko">K-Drama (Korean Series)</option>
+                    <option value="tv-ko">K-Drama (Series)</option>
                     <option value="movie-ko">Korean Movie</option>
-                    <option value="tv-ja">Anime (Japanese Animation)</option>
+                    <option value="tv-ja">Anime (Series)</option>
                     <option value="movie-ja">Japanese Movie</option>
                     <option value="tv-hi">Bollywood Series</option>
                     <option value="movie-hi">Bollywood Movie</option>
                 </select>
             </div>
-            <button id="generate-btn">Find Content</button>
+
+            <button id="generate-btn" class="smart-red-btn">Find Content</button>
         </section>
 
         <section id="result-display"></section>
-
-        <hr style="border: 0; border-top: 1px solid #333; margin: 40px 0;">
 
         <div id="home-recommendations">
             <div class="home-row">
@@ -66,10 +65,6 @@
             <div class="home-row">
                 <h3>Popular Anime</h3>
                 <div id="row-anime" class="recs"></div>
-            </div>
-            <div class="home-row">
-                <h3>Top Hollywood Movies</h3>
-                <div id="row-hollywood" class="recs"></div>
             </div>
         </div>
     </div>
