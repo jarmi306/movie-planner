@@ -10,35 +10,57 @@
 body {
     background-color: var(--bg);
     color: var(--text);
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     padding: 10px;
 }
 
-/* SMART RED BUTTONS */
+/* NAVIGATION */
+nav { display: flex; justify-content: space-between; align-items: center; padding: 10px 5px; }
+.logo { color: var(--primary); font-size: 1.6rem; font-weight: bold; cursor: pointer; }
+.profile-link-btn { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; }
+
+/* SMART FILTER CARD (Restored Design) */
+#filter-card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 20px;
+    margin-top: 20px;
+    border: 1px solid #222;
+}
+
+#filter-card h3 { margin-top: 0; font-size: 1.3rem; }
+
 .genre-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
-    margin: 20px 0;
+    margin-bottom: 20px;
 }
 
 .smart-label {
     background: #222;
-    padding: 15px;
+    padding: 12px;
     border-radius: 10px;
     border: 1px solid #333;
     display: flex;
     align-items: center;
     cursor: pointer;
-    font-weight: 600;
 }
 
-.smart-label input[type="checkbox"] {
-    accent-color: var(--primary);
-    width: 18px;
-    height: 18px;
-    margin-right: 12px;
+.select-group { margin-top: 15px; }
+.select-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #888; }
+
+/* Fixed: The Basic Dropdown Look */
+select {
+    width: 100%;
+    padding: 14px;
+    background: #222;
+    color: white;
+    border: 1px solid #333;
+    border-radius: 10px;
+    font-size: 1rem;
+    outline: none;
 }
 
 .smart-red-btn {
@@ -50,12 +72,10 @@ body {
     border-radius: 12px;
     font-size: 1.1rem;
     font-weight: bold;
+    margin-top: 25px;
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
-    transition: 0.3s;
 }
-
-.smart-red-btn:active { transform: scale(0.98); background: var(--primary-hover); }
 
 /* POPCORN LOADER */
 #loading-overlay {
@@ -69,26 +89,15 @@ body {
 }
 .loader-content { text-align: center; }
 .popcorn-icon { font-size: 5rem; animation: pop 0.8s infinite alternate; }
-@keyframes pop { from { transform: translateY(0) scale(1); } to { transform: translateY(-30px) scale(1.1); } }
+@keyframes pop { from { transform: translateY(0); } to { transform: translateY(-30px); } }
 
-/* MOVIE DISPLAY (MOBILE SIZING) */
-.movie-card { 
-    background: var(--card); 
-    border-radius: 20px; 
-    margin: 20px auto; 
-    max-width: 450px; 
-    overflow: hidden; 
-}
+/* MOVIE CARD & ROWS */
+.movie-card { background: var(--card); border-radius: 20px; overflow: hidden; margin-top: 25px; max-width: 500px; margin-inline: auto; }
 .movie-card img { width: 100%; max-height: 400px; object-fit: cover; }
-.movie-info { padding: 20px; }
+.home-row { margin: 30px 0; }
+.home-row h3 { border-left: 3px solid var(--primary); padding-left: 10px; margin-bottom: 10px; }
 
-/* SHARED ROW STYLES */
 .recs { display: flex; gap: 12px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
 .recs::-webkit-scrollbar { display: none; }
-.rec-item { min-width: 120px; text-align: center; }
+.rec-item { min-width: 120px; cursor: pointer; }
 .rec-item img { width: 100%; border-radius: 8px; height: 170px; object-fit: cover; }
-
-/* DASHBOARD STYLES */
-.profile-header { display: flex; gap: 10px; margin-bottom: 20px; }
-.stat-card { flex: 1; background: var(--card); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #333; }
-.stat-card h2 { color: var(--primary); margin: 0; }
