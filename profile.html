@@ -3,32 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Dashboard</title>
+    <title>My Dashboard - Movie Planner</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="profile-page">
     <nav>
         <div class="logo" onclick="window.location.href='index.html'">Movie Planner</div>
-        <button class="profile-link-btn" onclick="window.location.href='index.html'">← Back</button>
+        <button class="profile-link-btn" onclick="window.location.href='index.html'">← Back to Finder</button>
     </nav>
 
     <div class="container">
-        <div class="profile-header">
+        <header class="profile-header">
             <div class="stat-card">
                 <h2 id="w-count">0</h2>
                 <p>Watchlist</p>
             </div>
             <div class="stat-card">
                 <h2 id="h-count">0</h2>
-                <p>Rated</p>
+                <p>Rated History</p>
             </div>
-        </div>
+        </header>
 
-        <h3 style="border-left: 3px solid var(--accent); padding-left: 10px; font-size: 1.1rem;">📌 My Watchlist</h3>
-        <div id="watchlist-grid" class="movie-grid"></div>
+        <section class="profile-section">
+            <h3 style="border-left: 4px solid var(--accent); padding-left: 12px; margin-bottom: 20px;">📌 My Watchlist</h3>
+            <div id="watchlist-grid" class="movie-grid">
+                <p style="color: #444;">Syncing your list...</p>
+            </div>
+        </section>
 
-        <h3 style="border-left: 3px solid var(--primary); padding-left: 10px; font-size: 1.1rem; margin-top: 30px;">🎬 History</h3>
-        <div id="history-grid" class="movie-grid"></div>
+        <section class="profile-section" style="margin-top: 40px;">
+            <h3 style="border-left: 4px solid var(--primary); padding-left: 12px; margin-bottom: 20px;">🎬 History</h3>
+            <div id="history-grid" class="movie-grid">
+                <p style="color: #444;">Loading history...</p>
+            </div>
+        </section>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -41,37 +49,56 @@
             if (u) {
                 const wGrid = document.getElementById('watchlist-grid');
                 const hGrid = document.getElementById('history-grid');
-                const snapshot = await db.collection("users").doc(u.uid).collection("watched").get();
+                
+                // Fetch data ordered by most recent first
+                const snapshot = await db.collection("users").doc(u.uid).collection("watched")
+                                   .orderBy("timestamp", "desc").get();
                 
                 let wc = 0, hc = 0;
-                wGrid.innerHTML = ""; hGrid.innerHTML = "";
+                wGrid.innerHTML = ""; 
+                hGrid.innerHTML = "";
 
                 snapshot.forEach(doc => {
                     const d = doc.data();
                     const card = `
                         <div class="profile-card">
-                            <img src="https://image.tmdb.org/t/p/w300${d.poster}" onerror="this.src='https://via.placeholder.com/300x450'">
+                            <div class="card-img-container">
+                                <img src="https://image.tmdb.org/t/p/w300${d.poster}" onerror="this.src='https://via.placeholder.com/300x450'">
+                            </div>
                             <div class="profile-card-content">
                                 <h4>${d.title}</h4>
                                 <button class="delete-btn" onclick="deleteItem('${doc.id}')">Remove</button>
                             </div>
                         </div>
                     `;
-                    if(d.status === 'watchlist') { wGrid.innerHTML += card; wc++; }
-                    else { hGrid.innerHTML += card; hc++; }
+                    
+                    if(d.status === 'watchlist') {
+                        wGrid.innerHTML += card;
+                        wc++;
+                    } else {
+                        hGrid.innerHTML += card;
+                        hc++;
+                    }
                 });
+
+                // Update Stat Numbers
                 document.getElementById('w-count').innerText = wc;
                 document.getElementById('h-count').innerText = hc;
-                
-                if(wc === 0) wGrid.innerHTML = "<p style='color:#555; font-size:0.8rem;'>Empty</p>";
-                if(hc === 0) hGrid.innerHTML = "<p style='color:#555; font-size:0.8rem;'>Empty</p>";
+
+                // Empty state handling
+                if(wc === 0) wGrid.innerHTML = "<p style='color:#666; font-style:italic;'>Your watchlist is empty.</p>";
+                if(hc === 0) hGrid.innerHTML = "<p style='color:#666; font-style:italic;'>No history recorded yet.</p>";
             }
         });
 
         async function deleteItem(id) {
-            if(confirm("Remove this item?")) {
-                await db.collection("users").doc(auth.currentUser.uid).collection("watched").doc(id).delete();
-                location.reload();
+            if(confirm("Are you sure you want to remove this?")) {
+                try {
+                    await db.collection("users").doc(auth.currentUser.uid).collection("watched").doc(id).delete();
+                    location.reload();
+                } catch (e) {
+                    alert("Error deleting item: " + e.message);
+                }
             }
         }
     </script>
