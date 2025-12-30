@@ -1,4 +1,4 @@
-// Replace with your actual Firebase Config
+// Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCPzyGBtT3my4njW7B6xZw7BRKWP2yRS38",
   authDomain: "movie-planner-4e8f8.firebaseapp.com",
@@ -18,64 +18,80 @@ const db = firebase.firestore();
 
 let user = null;
 
-// Observe Auth State
+/**
+ * 1. AUTH STATE OBSERVER
+ * Handles UI changes across all pages when login status changes
+ */
 auth.onAuthStateChanged(u => {
     user = u;
     const loginForm = document.getElementById('login-form-container');
     const userSection = document.getElementById('user-logged-in');
     const userInfo = document.getElementById('user-info');
     
-    // Check if we are on the index page or profile page
-    if (loginForm && userSection) {
-        if (u) {
-            loginForm.style.display = 'none';
-            userSection.style.display = 'block';
-            userInfo.innerText = `Hi, ${u.email.split('@')[0]}`;
-        } else {
-            loginForm.style.display = 'flex';
-            userSection.style.display = 'none';
-        }
+    if (u) {
+        // Update Navbar for logged-in user
+        if (loginForm) loginForm.style.display = 'none';
+        if (userSection) userSection.style.display = 'flex';
+        if (userInfo) userInfo.innerText = `Hi, ${u.email.split('@')[0]}`;
+    } else {
+        // Update Navbar for logged-out user
+        if (loginForm) loginForm.style.display = 'flex';
+        if (userSection) userSection.style.display = 'none';
     }
 });
 
-/** * AUTHENTICATION FUNCTIONS 
+/**
+ * 2. AUTHENTICATION LOGIC
  */
 
-// Sign Up
+// Sign Up Logic
 const signupBtn = document.getElementById('signup-btn');
-if(signupBtn) {
+if (signupBtn) {
     signupBtn.onclick = () => {
         const email = document.getElementById('email').value;
         const pass = document.getElementById('password').value;
+        if (!email || !pass) return alert("Please fill in all fields");
+        
         auth.createUserWithEmailAndPassword(email, pass)
-            .then(() => alert("Account created successfully!"))
+            .then(() => {
+                alert("Account created!");
+                window.location.href = 'index.html';
+            })
             .catch(err => alert("Signup Error: " + err.message));
     };
 }
 
-// Login
+// Login Logic
 const loginBtn = document.getElementById('login-btn');
-if(loginBtn) {
+if (loginBtn) {
     loginBtn.onclick = () => {
         const email = document.getElementById('email').value;
         const pass = document.getElementById('password').value;
+        
         auth.signInWithEmailAndPassword(email, pass)
+            .then(() => {
+                window.location.href = 'index.html';
+            })
             .catch(err => alert("Login Error: " + err.message));
     };
 }
 
-// Logout
+// Logout Logic
 const logoutBtn = document.getElementById('logout-btn');
-if(logoutBtn) {
-    logoutBtn.onclick = () => auth.signOut();
+if (logoutBtn) {
+    logoutBtn.onclick = () => {
+        auth.signOut().then(() => {
+            window.location.href = 'index.html';
+        });
+    };
 }
 
-/** * DATA SAVING FUNCTIONS 
+/**
+ * 3. DATA SAVING
  */
-
 async function saveShow(movie, status) {
     if (!user) {
-        alert("Please login to save movies to your profile!");
+        alert("Please login to save movies!");
         return;
     }
     
@@ -93,20 +109,20 @@ async function saveShow(movie, status) {
         console.error("Firestore Error:", e);
         alert("Database Error: " + e.message);
     }
-    // Add to auth.js
+}
+
+/**
+ * 4. NAVIGATION GUARD
+ * Prevents logged-out users from seeing the profile page
+ */
 function checkNavigation() {
     const currentPage = window.location.pathname;
     
     auth.onAuthStateChanged(u => {
-        // If on the profile page but not logged in, send to login
+        // If on profile page and not logged in, boot to login page
         if (currentPage.includes('profile.html') && !u) {
             window.location.href = 'login.html';
-        }
-        // If on the login page but already logged in, send to index
-        if (currentPage.includes('login.html') && u) {
-            window.location.href = 'index.html';
         }
     });
 }
 checkNavigation();
-}
