@@ -5,20 +5,19 @@ genBtn.onclick = async () => {
     const selectedGenres = Array.from(document.querySelectorAll('.genre-check:checked')).map(el => el.value);
     const selection = document.getElementById('language-select').value;
     
-    display.innerHTML = "<div class='loading-text'>Finding accurate matches...</div>";
+    display.innerHTML = "<div class='loading-text'>Fetching accurate matches...</div>";
     
     const content = await getMovie(selectedGenres, selection);
     
     if (content) {
         showFullDetails(content.id, content.media_type);
     } else {
-        display.innerHTML = "<p>No results found for these filters. Try adding more genres!</p>";
+        display.innerHTML = "<p>No results found. Try broader filters!</p>";
     }
 };
 
 async function showFullDetails(id, type) {
-    // Correctly routing the details request based on Movie or TV
-    const detailsUrl = `https://api.themoviedb.org/3/${type}/${id}?api_key=${TMDB_KEY}&append_to_response=recommendations,credits`;
+    const detailsUrl = `https://api.themoviedb.org/3/${type}/${id}?api_key=${TMDB_KEY}&append_to_response=recommendations,credits,videos`;
     
     try {
         const res = await fetch(detailsUrl);
@@ -38,7 +37,7 @@ async function showFullDetails(id, type) {
                     <hr>
                     <h3>Similar Recommendations</h3>
                     <div class="recs">
-                        ${data.recommendations.results.slice(0, 5).map(r => `
+                        ${data.recommendations.results.slice(0, 6).map(r => `
                             <div class="rec-item" onclick="showFullDetails(${r.id}, '${type}')">
                                 <img src="https://image.tmdb.org/t/p/w200${r.poster_path}">
                                 <p>${r.title || r.name}</p>
@@ -54,12 +53,12 @@ async function showFullDetails(id, type) {
             </div>
         `;
 
-        // Save functions
+        // Pass the whole 'data' object to saveShow
         document.getElementById('btn-like').onclick = () => saveShow(data, 'liked');
         document.getElementById('btn-watch').onclick = () => saveShow(data, 'watchlist');
         document.getElementById('btn-dislike').onclick = () => genBtn.click();
 
     } catch (err) {
-        display.innerHTML = "<p>Error loading details. Please try again.</p>";
+        display.innerHTML = "<p>Error loading details.</p>";
     }
 }

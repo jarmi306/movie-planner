@@ -3,11 +3,9 @@ const TMDB_KEY = 'c483ed36ea1f2ab5fdd8d61da303798b';
 async function getMovie(genres, selection) {
     const [type, lang] = selection.split('-'); 
     const genreIds = genres.join(',');
-    const randomPage = Math.floor(Math.random() * 3) + 1;
+    const randomPage = Math.floor(Math.random() * 5) + 1;
     
     const endpoint = type === 'tv' ? 'discover/tv' : 'discover/movie';
-    
-    // Strict filtering: 'with_original_language' ensures you get real K-Dramas, not dubbed ones.
     const url = `https://api.themoviedb.org/3/${endpoint}?api_key=${TMDB_KEY}&with_genres=${genreIds}&with_original_language=${lang}&page=${randomPage}&sort_by=popularity.desc`;
     
     try {
@@ -23,12 +21,11 @@ async function getMovie(genres, selection) {
                 overview: item.overview,
                 vote_average: item.vote_average,
                 release_date: item.release_date || item.first_air_date,
-                media_type: type // Strictly passing 'tv' or 'movie'
+                media_type: type 
             };
         }
         return null;
     } catch (err) {
-        console.error("Fetch Error:", err);
         return null;
     }
 }

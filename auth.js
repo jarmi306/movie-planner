@@ -95,12 +95,17 @@ async function saveShow(movie, status) {
         return;
     }
     
+    // FIX: Normalize the title and poster before sending to Firebase
+    // If movie.title doesn't exist, use movie.name. If that's gone, use "Unknown"
+    const finalTitle = movie.title || movie.name || "Unknown Title";
+    const finalPoster = movie.poster_path || "";
+
     try {
         await db.collection("users").doc(user.uid).collection("watched").doc(movie.id.toString()).set({
-            title: movie.title,
-            status: status, // 'liked', 'disliked', or 'watchlist'
-            poster: movie.poster_path,
-            rating: movie.vote_average,
+            title: finalTitle,
+            status: status, 
+            poster: finalPoster,
+            rating: movie.vote_average || 0,
             id: movie.id,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
