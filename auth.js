@@ -1,4 +1,3 @@
-// Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCPzyGBtT3my4njW7B6xZw7BRKWP2yRS38",
   authDomain: "movie-planner-4e8f8.firebaseapp.com",
@@ -8,17 +7,16 @@ const firebaseConfig = {
   appId: "1:141209573472:web:5414792eeaa8f3b3b18b05"
 };
 
-// Initialize Firebase
+// Initialize Firebase safely
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
-
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 let user = null;
 
-// Auth State Observer
+// Handle Auth State Changes
 auth.onAuthStateChanged(u => {
     user = u;
     const loginForm = document.getElementById('login-form-container');
@@ -35,37 +33,47 @@ auth.onAuthStateChanged(u => {
     }
 });
 
-// LOGIN LOGIC (for index.html and login.html)
-function handleLogin() {
-    const email = document.getElementById('email') ? document.getElementById('email').value : document.getElementById('login-email').value;
-    const pass = document.getElementById('password') ? document.getElementById('password').value : document.getElementById('login-pass').value;
-    
-    auth.signInWithEmailAndPassword(email, pass)
-        .then(() => { if(window.location.pathname.includes('login')) window.location.href = 'index.html'; })
-        .catch(err => alert("Login Error: " + err.message));
+// Helper: Redirect to Login Page if on Index
+function goToLoginPage() {
+    window.location.href = 'login.html';
 }
 
-// SIGNUP LOGIC
-function handleSignup() {
-    const email = document.getElementById('email') ? document.getElementById('email').value : document.getElementById('sig-email').value;
-    const pass = document.getElementById('password') ? document.getElementById('password').value : document.getElementById('sig-pass').value;
-    
-    auth.createUserWithEmailAndPassword(email, pass)
-        .then(() => { window.location.href = 'index.html'; })
-        .catch(err => alert("Signup Error: " + err.message));
-}
-
-// Attach listeners safely
+// Global Click Handler for Buttons
 document.addEventListener('click', (e) => {
-    if (e.target.id === 'login-btn' || e.target.id === 'do-login') handleLogin();
-    if (e.target.id === 'signup-btn' || e.target.id === 'do-signup') handleSignup();
-    if (e.target.id === 'logout-btn') auth.signOut().then(() => window.location.href = 'index.html');
+    const id = e.target.id;
+    
+    // If on Index page, the "Login / Sign Up" button should just take you to login.html
+    if (id === 'login-btn' && window.location.pathname.includes('index.html')) {
+        goToLoginPage();
+    }
+    
+    // Actual Login Logic (Used in login.html)
+    if (id === 'do-login') {
+        const email = document.getElementById('login-email').value;
+        const pass = document.getElementById('login-pass').value;
+        auth.signInWithEmailAndPassword(email, pass)
+            .then(() => window.location.href = 'index.html')
+            .catch(err => alert("Login Error: " + err.message));
+    }
+
+    // Actual Signup Logic (Used in login.html)
+    if (id === 'do-signup') {
+        const email = document.getElementById('sig-email').value;
+        const pass = document.getElementById('sig-pass').value;
+        auth.createUserWithEmailAndPassword(email, pass)
+            .then(() => window.location.href = 'index.html')
+            .catch(err => alert("Signup Error: " + err.message));
+    }
+
+    // Logout
+    if (id === 'logout-btn') {
+        auth.signOut().then(() => window.location.href = 'index.html');
+    }
 });
 
-// DATA SAVING WITH NORMALIZATION (The Dragon Ball Fix)
+// Normalize and Save Data
 async function saveShow(movie, status) {
     if (!user) return alert("Please login first!");
-
     const finalTitle = movie.title || movie.name || "Unknown Title";
     const finalPoster = movie.poster_path || "";
 
@@ -83,12 +91,3 @@ async function saveShow(movie, status) {
         alert("Database Error: " + e.message);
     }
 }
-
-// Navigation Guard
-function checkNavigation() {
-    const path = window.location.pathname.toLowerCase();
-    auth.onAuthStateChanged(u => {
-        if (path.includes('profile') && !u) window.location.href = 'login.html';
-    });
-}
-checkNavigation();
