@@ -9,46 +9,47 @@
 <body>
     <nav>
         <div class="logo" onclick="location.href='index.html'">Movie Planner</div>
-        
         <div id="auth-section">
             <div id="login-form-container">
                 <button class="nav-btn" onclick="location.href='login.html'">Login / Sign Up</button>
             </div>
-<div id="user-logged-in" style="display:none">
-    <div class="user-controls">
-        <span id="user-info" onclick="location.href='/profile.html'"></span>
-        <button class="profile-link-btn" onclick="location.href='/profile.html'">My Profile</button>
-        <button id="logout-btn">Logout</button>
-    </div>
-</div>
+            <div id="user-logged-in" style="display:none">
+                <div class="user-controls">
+                    <span id="user-info" onclick="location.href='profile.html'"></span>
+                    <button class="profile-link-btn" onclick="location.href='profile.html'">My Profile</button>
+                    <button id="logout-btn">Logout</button>
+                </div>
+            </div>
         </div>
     </nav>
 
     <div class="container">
         <section id="filter-card">
             <h3>Find Your Next Show</h3>
-            
             <div class="genre-grid">
                 <label><input type="checkbox" class="genre-check" value="28"> Action</label>
                 <label><input type="checkbox" class="genre-check" value="18"> Drama</label>
                 <label><input type="checkbox" class="genre-check" value="35"> Comedy</label>
-                <label><input type="checkbox" class="genre-check" value="80"> Thriller</label>
-                <label><input type="checkbox" class="genre-check" value="27"> Horror</label>
                 <label><input type="checkbox" class="genre-check" value="10749"> Romance</label>
+                <label><input type="checkbox" class="genre-check" value="27"> Horror</label>
+                <label><input type="checkbox" class="genre-check" value="16"> Animation</label>
             </div>
             
             <div class="select-group">
-                <label for="language-select">Industry:</label>
+                <label for="language-select">Format & Region:</label>
                 <select id="language-select">
-                    <option value="en">Hollywood (English)</option>
-                    <option value="ko">K-Drama (Korean)</option>
-                    <option value="zh">C-Drama (Chinese)</option>
-                    <option value="hi">Bollywood (Hindi)</option>
-                    <option value="ja">Anime/Japanese</option>
+                    <option value="movie-en">Hollywood Movie</option>
+                    <option value="tv-en">English Series</option>
+                    <option value="tv-ko">K-Drama (Korean Series)</option>
+                    <option value="movie-ko">Korean Movie</option>
+                    <option value="tv-ja">Anime (Japanese Series)</option>
+                    <option value="movie-ja">Japanese Movie</option>
+                    <option value="tv-hi">Bollywood Series</option>
+                    <option value="movie-hi">Bollywood Movie</option>
                 </select>
             </div>
 
-            <button id="generate-btn">Find Movie</button>
+            <button id="generate-btn">Find Content</button>
         </section>
 
         <section id="result-display"></section>
@@ -57,7 +58,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    
     <script src="auth.js"></script>
     <script src="api.js"></script>
     <script src="app.js"></script>
