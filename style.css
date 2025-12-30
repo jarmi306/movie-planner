@@ -81,3 +81,25 @@ select, #generate-btn {
 .dislike { background: #c0392b; }
 
 #user-info { font-weight: bold; color: var(--primary); }
+#auth-section input {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #333;
+    background: #222;
+    color: white;
+    margin-right: 5px;
+    width: 120px; /* Small for mobile row */
+}
+
+#login-form-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: flex-end;
+}
+
+#logout-btn {
+    background: #444;
+    font-size: 0.8rem;
+    padding: 5px 10px;
+}

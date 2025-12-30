@@ -11,29 +11,56 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// 1. Simplify Provider
-const provider = new firebase.auth.GoogleAuthProvider();
-provider.setCustomParameters({ prompt: 'select_account' }); // Forces the account selector to show
+let user = null;
 
-// 2. Handle returning from Google
-auth.getRedirectResult().catch((error) => {
-    alert("Error returning from Google: " + error.message);
-});
-
-// 3. Update UI
-auth.onAuthStateChanged(user => {
-    const btn = document.getElementById('login-btn');
-    const info = document.getElementById('user-info');
-    if (user) {
-        btn.style.display = 'none';
-        info.innerText = "Hi, " + user.displayName.split(' ')[0];
+// Auth State Observer
+auth.onAuthStateChanged(u => {
+    user = u;
+    const form = document.getElementById('login-form-container');
+    const loggedInSection = document.getElementById('user-logged-in');
+    const userInfo = document.getElementById('user-info');
+    
+    if (u) {
+        form.style.display = 'none';
+        loggedInSection.style.display = 'block';
+        userInfo.innerText = u.email.split('@')[0];
     } else {
-        btn.style.display = 'block';
-        info.innerText = '';
+        form.style.display = 'flex';
+        loggedInSection.style.display = 'none';
     }
 });
 
-// 4. Trigger Login
-document.getElementById('login-btn').onclick = () => {
-    auth.signInWithRedirect(provider);
+// Sign Up Logic
+document.getElementById('signup-btn').onclick = () => {
+    const email = document.getElementById('email').value;
+    const pass = document.getElementById('password').value;
+    auth.createUserWithEmailAndPassword(email, pass)
+        .catch(err => alert("Signup Error: " + err.message));
 };
+
+// Login Logic
+document.getElementById('login-btn').onclick = () => {
+    const email = document.getElementById('email').value;
+    const pass = document.getElementById('password').value;
+    auth.signInWithEmailAndPassword(email, pass)
+        .catch(err => alert("Login Error: " + err.message));
+};
+
+// Logout Logic
+document.getElementById('logout-btn').onclick = () => auth.signOut();
+
+// Save Data Function
+async function saveShow(movie, status) {
+    if (!user) return alert("Please login first!");
+    try {
+        await db.collection("users").doc(user.uid).collection("watched").doc(movie.id.toString()).set({
+            title: movie.title,
+            status: status,
+            poster: movie.poster_path,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        alert("Saved to your profile!");
+    } catch (e) {
+        alert("Error: " + e.message);
+    }
+}
