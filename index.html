@@ -6,7 +6,15 @@
     <title>Movie Planner</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#e50914">
+
+<script>
+  // Register the service worker
+  if ('service worker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  }
+</script>
 </head>
 <body>
     <div id="loading-overlay" style="display:none;">
