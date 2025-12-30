@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile - Movie Planner</title>
+    <title>My Watchlist - Movie Planner</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <nav>
-        <div class="logo" onclick="location.href='/index.html'">Movie Planner</div>
-        <button onclick="location.href='/index.html'">Back to Finder</button>
+        <div class="logo" onclick="window.location.href='index.html'">Movie Planner</div>
+        <button class="nav-btn" onclick="window.location.href='index.html'">Back to Finder</button>
     </nav>
 
     <div class="container">
@@ -26,21 +26,26 @@
     <script src="auth.js"></script>
     
     <script>
-        // Specific logic for loading data on the profile page
         auth.onAuthStateChanged(async (u) => {
             if (u) {
                 const watchlistDiv = document.getElementById('watchlist-grid');
                 const historyDiv = document.getElementById('history-grid');
-                
+                watchlistDiv.innerHTML = ""; // Clear loaders
+                historyDiv.innerHTML = "";
+
                 const snapshot = await db.collection("users").doc(u.uid).collection("watched").get();
                 
+                if (snapshot.empty) {
+                    watchlistDiv.innerHTML = "<p>Your list is empty.</p>";
+                }
+
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const card = `
                         <div class="mini-card">
                             <img src="https://image.tmdb.org/t/p/w200${data.poster}">
                             <p>${data.title}</p>
-                            <small>${data.status}</small>
+                            <small style="color:var(--primary)">${data.status.toUpperCase()}</small>
                         </div>
                     `;
                     if(data.status === 'watchlist') watchlistDiv.innerHTML += card;

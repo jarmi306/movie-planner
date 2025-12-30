@@ -7,7 +7,6 @@ const firebaseConfig = {
   appId: "1:141209573472:web:5414792eeaa8f3b3b18b05"
 };
 
-// Initialize Firebase
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
@@ -16,53 +15,23 @@ const db = firebase.firestore();
 
 let currentUser = null;
 
-// Auth State Observer
+// AUTO-LOGIN LOGIC
 auth.onAuthStateChanged(user => {
-    currentUser = user;
-    const loginForm = document.getElementById('login-form-container');
-    const userSection = document.getElementById('user-logged-in');
-    const userInfo = document.getElementById('user-info');
-    
     if (user) {
-        if (loginForm) loginForm.style.display = 'none';
-        if (userSection) userSection.style.display = 'flex';
-        if (userInfo) userInfo.innerText = `Hi, ${user.email.split('@')[0]}`;
+        currentUser = user;
+        const userInfo = document.getElementById('user-info');
+        if (userInfo) userInfo.innerText = "Device Account Active";
+        console.log("Logged in as:", user.uid);
     } else {
-        if (loginForm) loginForm.style.display = 'flex';
-        if (userSection) userSection.style.display = 'none';
+        // If no account, create one anonymously right now
+        auth.signInAnonymously()
+            .catch(error => console.error("Anonymous Auth Error:", error));
     }
 });
 
-// EXPLICIT GLOBAL FUNCTIONS
-window.handleLogin = function() {
-    const email = document.getElementById('login-email').value;
-    const pass = document.getElementById('login-pass').value;
-    
-    if (!email || !pass) return alert("Please fill in all fields.");
-
-    auth.signInWithEmailAndPassword(email, pass)
-        .then(() => { window.location.href = 'index.html'; })
-        .catch(err => alert("Login Error: " + err.message));
-};
-
-window.handleSignup = function() {
-    const email = document.getElementById('sig-email').value;
-    const pass = document.getElementById('sig-pass').value;
-
-    if (!email || !pass) return alert("Please fill in all fields.");
-
-    auth.createUserWithEmailAndPassword(email, pass)
-        .then(() => { window.location.href = 'index.html'; })
-        .catch(err => alert("Signup Error: " + err.message));
-};
-
-window.handleLogout = function() {
-    auth.signOut().then(() => { window.location.href = 'index.html'; });
-};
-
-// Save Show Logic
+// SAVE FUNCTION (Still works the same!)
 window.saveShow = async function(movie, status) {
-    if (!currentUser) return alert("Please login first!");
+    if (!currentUser) return alert("Still connecting to device account...");
 
     const finalTitle = movie.title || movie.name || "Unknown Title";
     const finalPoster = movie.poster_path || "";
