@@ -14,7 +14,7 @@
             <h2>Login</h2>
             <input type="email" id="login-email" placeholder="Email">
             <input type="password" id="login-pass" placeholder="Password">
-            <button id="do-login">Login</button>
+            <button onclick="handleLogin()">Login</button>
             <p onclick="toggleAuth()">Don't have an account? <b>Sign Up</b></p>
             <p onclick="forgotPassword()" style="color: gray; font-size: 0.8rem; cursor: pointer;">Forgot Password?</p>
         </div>
@@ -23,7 +23,7 @@
             <h2>Sign Up</h2>
             <input type="email" id="sig-email" placeholder="Email">
             <input type="password" id="sig-pass" placeholder="Password">
-            <button id="do-signup">Create Account</button>
+            <button onclick="handleSignup()">Create Account</button>
             <p onclick="toggleAuth()">Already have an account? <b>Login</b></p>
         </div>
     </div>
@@ -38,14 +38,6 @@
             const s = document.getElementById('signup-box');
             l.style.display = l.style.display === 'none' ? 'block' : 'none';
             s.style.display = s.style.display === 'none' ? 'block' : 'none';
-        }
-
-        function forgotPassword() {
-            const email = document.getElementById('login-email').value;
-            if(!email) return alert("Enter your email first!");
-            auth.sendPasswordResetEmail(email)
-                .then(() => alert("Password reset link sent to your email!"))
-                .catch(err => alert(err.message));
         }
     </script>
 </body>
