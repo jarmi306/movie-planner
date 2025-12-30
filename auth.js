@@ -116,12 +116,13 @@ async function saveShow(movie, status) {
  * Prevents logged-out users from seeing the profile page
  */
 function checkNavigation() {
-    const currentPage = window.location.pathname;
+    // This looks for 'profile' anywhere in the URL path
+    const path = window.location.pathname.toLowerCase();
     
     auth.onAuthStateChanged(u => {
-        // If on profile page and not logged in, boot to login page
-        if (currentPage.includes('profile.html') && !u) {
-            window.location.href = 'login.html';
+        if (path.includes('profile') && !u) {
+            console.log("Access denied: No user found. Redirecting to login...");
+            window.location.href = '/login.html';
         }
     });
 }

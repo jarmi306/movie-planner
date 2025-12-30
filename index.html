@@ -8,22 +8,19 @@
 </head>
 <body>
     <nav>
-        <div class="logo">Movie Planner</div>
+        <div class="logo" onclick="location.href='index.html'">Movie Planner</div>
         
         <div id="auth-section">
             <div id="login-form-container">
-                <input type="email" id="email" placeholder="Email" required>
-                <input type="password" id="password" placeholder="Password" required>
-                <div class="auth-buttons">
-                    <button id="login-btn">Login</button>
-                    <button id="signup-btn">Sign Up</button>
-                </div>
+                <button class="nav-btn" onclick="location.href='login.html'">Login / Sign Up</button>
             </div>
-
-            <div id="user-logged-in" style="display:none">
-                <span id="user-info"></span>
-                <button id="logout-btn">Logout</button>
-            </div>
+<div id="user-logged-in" style="display:none">
+    <div class="user-controls">
+        <span id="user-info" onclick="location.href='/profile.html'"></span>
+        <button class="profile-link-btn" onclick="location.href='/profile.html'">My Profile</button>
+        <button id="logout-btn">Logout</button>
+    </div>
+</div>
         </div>
     </nav>
 
@@ -54,8 +51,7 @@
             <button id="generate-btn">Find Movie</button>
         </section>
 
-        <section id="result-display">
-            </section>
+        <section id="result-display"></section>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Movie Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo" onclick="location.href='/index.html'">Movie Planner</div>
+        <button onclick="location.href='/index.html'">Back to Finder</button>
+    </nav>
+
+    <div class="container">
+        <h2>My Watchlist</h2>
+        <div id="watchlist-grid" class="movie-grid"></div>
+
+        <h2>My History</h2>
+        <div id="history-grid" class="movie-grid"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="auth.js"></script>
+    
+    <script>
+        // Specific logic for loading data on the profile page
+        auth.onAuthStateChanged(async (u) => {
+            if (u) {
+                const watchlistDiv = document.getElementById('watchlist-grid');
+                const historyDiv = document.getElementById('history-grid');
+                
+                const snapshot = await db.collection("users").doc(u.uid).collection("watched").get();
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const card = `
+                        <div class="mini-card">
+                            <img src="https://image.tmdb.org/t/p/w200${data.poster}">
+                            <p>${data.title}</p>
+                            <small>${data.status}</small>
+                        </div>
+                    `;
+                    if(data.status === 'watchlist') watchlistDiv.innerHTML += card;
+                    else historyDiv.innerHTML += card;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

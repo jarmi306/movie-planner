@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Movie Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <h1 class="logo">Movie Planner</h1>
+        
+        <div id="login-box">
+            <h2>Login</h2>
+            <input type="email" id="login-email" placeholder="Email">
+            <input type="password" id="login-pass" placeholder="Password">
+            <button id="do-login">Login</button>
+            <p onclick="toggleAuth()">Don't have an account? Sign Up</p>
+            <p onclick="forgotPassword()" style="color: gray; font-size: 0.8rem;">Forgot Password?</p>
+        </div>
+
+        <div id="signup-box" style="display:none">
+            <h2>Sign Up</h2>
+            <input type="email" id="sig-email" placeholder="Email">
+            <input type="password" id="sig-pass" placeholder="Password">
+            <button id="do-signup">Create Account</button>
+            <p onclick="toggleAuth()">Already have an account? Login</p>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        function toggleAuth() {
+            const l = document.getElementById('login-box');
+            const s = document.getElementById('signup-box');
+            l.style.display = l.style.display === 'none' ? 'block' : 'none';
+            s.style.display = s.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function forgotPassword() {
+            const email = document.getElementById('login-email').value;
+            if(!email) return alert("Enter your email first!");
+            auth.sendPasswordResetEmail(email)
+                .then(() => alert("Password reset link sent to your email!"))
+                .catch(err => alert(err.message));
+        }
+    </script>
+</body>
+</html>
