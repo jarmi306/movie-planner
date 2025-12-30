@@ -5,14 +5,14 @@ genBtn.onclick = async () => {
     const selectedGenres = Array.from(document.querySelectorAll('.genre-check:checked')).map(el => el.value);
     const selection = document.getElementById('language-select').value;
     
-    display.innerHTML = "<div class='loading-text'>Fetching accurate matches...</div>";
+    display.innerHTML = "<div style='text-align:center; padding:20px;'>Finding accurate results...</div>";
     
     const content = await getMovie(selectedGenres, selection);
     
     if (content) {
         showFullDetails(content.id, content.media_type);
     } else {
-        display.innerHTML = "<p>No results found. Try broader filters!</p>";
+        display.innerHTML = "<p style='text-align:center'>No results found. Try fewer filters!</p>";
     }
 };
 
@@ -22,17 +22,17 @@ async function showFullDetails(id, type) {
     try {
         const res = await fetch(detailsUrl);
         const data = await res.json();
+        const trailer = data.videos.results.find(v => v.type === 'Trailer');
 
         display.innerHTML = `
             <div class="movie-card">
                 <img src="https://image.tmdb.org/t/p/w500${data.poster_path}" onerror="this.src='https://via.placeholder.com/500x750'">
                 <div class="movie-info">
                     <h2>${data.title || data.name}</h2>
-                    <p class="meta">${data.release_date || data.first_air_date} | ⭐ ${data.vote_average.toFixed(1)}</p>
+                    <p style="color:var(--primary); font-weight:bold;">${data.release_date || data.first_air_date} | ⭐ ${data.vote_average.toFixed(1)}</p>
                     <p class="full-overview">${data.overview}</p>
                     
-                    <h3>Cast</h3>
-                    <p class="cast-list">${data.credits.cast.slice(0, 5).map(c => c.name).join(', ')}</p>
+                    ${trailer ? `<button onclick="window.open('https://youtube.com/watch?v=${trailer.key}')" style="background:#ff0000; margin-bottom:15px;">Watch Trailer</button>` : ''}
 
                     <hr>
                     <h3>Similar Recommendations</h3>
@@ -53,7 +53,6 @@ async function showFullDetails(id, type) {
             </div>
         `;
 
-        // Pass the whole 'data' object to saveShow
         document.getElementById('btn-like').onclick = () => saveShow(data, 'liked');
         document.getElementById('btn-watch').onclick = () => saveShow(data, 'watchlist');
         document.getElementById('btn-dislike').onclick = () => genBtn.click();
