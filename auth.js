@@ -1,3 +1,4 @@
+// Replace with your actual Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyCPzyGBtT3my4njW7B6xZw7BRKWP2yRS38",
   authDomain: "movie-planner-4e8f8.firebaseapp.com",
@@ -7,60 +8,89 @@ const firebaseConfig = {
   appId: "1:141209573472:web:5414792eeaa8f3b3b18b05"
 };
 
-firebase.initializeApp(firebaseConfig);
+// Initialize Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 let user = null;
 
-// Auth State Observer
+// Observe Auth State
 auth.onAuthStateChanged(u => {
     user = u;
-    const form = document.getElementById('login-form-container');
-    const loggedInSection = document.getElementById('user-logged-in');
+    const loginForm = document.getElementById('login-form-container');
+    const userSection = document.getElementById('user-logged-in');
     const userInfo = document.getElementById('user-info');
     
-    if (u) {
-        form.style.display = 'none';
-        loggedInSection.style.display = 'block';
-        userInfo.innerText = u.email.split('@')[0];
-    } else {
-        form.style.display = 'flex';
-        loggedInSection.style.display = 'none';
+    // Check if we are on the index page or profile page
+    if (loginForm && userSection) {
+        if (u) {
+            loginForm.style.display = 'none';
+            userSection.style.display = 'block';
+            userInfo.innerText = `Hi, ${u.email.split('@')[0]}`;
+        } else {
+            loginForm.style.display = 'flex';
+            userSection.style.display = 'none';
+        }
     }
 });
 
-// Sign Up Logic
-document.getElementById('signup-btn').onclick = () => {
-    const email = document.getElementById('email').value;
-    const pass = document.getElementById('password').value;
-    auth.createUserWithEmailAndPassword(email, pass)
-        .catch(err => alert("Signup Error: " + err.message));
-};
+/** * AUTHENTICATION FUNCTIONS 
+ */
 
-// Login Logic
-document.getElementById('login-btn').onclick = () => {
-    const email = document.getElementById('email').value;
-    const pass = document.getElementById('password').value;
-    auth.signInWithEmailAndPassword(email, pass)
-        .catch(err => alert("Login Error: " + err.message));
-};
+// Sign Up
+const signupBtn = document.getElementById('signup-btn');
+if(signupBtn) {
+    signupBtn.onclick = () => {
+        const email = document.getElementById('email').value;
+        const pass = document.getElementById('password').value;
+        auth.createUserWithEmailAndPassword(email, pass)
+            .then(() => alert("Account created successfully!"))
+            .catch(err => alert("Signup Error: " + err.message));
+    };
+}
 
-// Logout Logic
-document.getElementById('logout-btn').onclick = () => auth.signOut();
+// Login
+const loginBtn = document.getElementById('login-btn');
+if(loginBtn) {
+    loginBtn.onclick = () => {
+        const email = document.getElementById('email').value;
+        const pass = document.getElementById('password').value;
+        auth.signInWithEmailAndPassword(email, pass)
+            .catch(err => alert("Login Error: " + err.message));
+    };
+}
 
-// Save Data Function
+// Logout
+const logoutBtn = document.getElementById('logout-btn');
+if(logoutBtn) {
+    logoutBtn.onclick = () => auth.signOut();
+}
+
+/** * DATA SAVING FUNCTIONS 
+ */
+
 async function saveShow(movie, status) {
-    if (!user) return alert("Please login first!");
+    if (!user) {
+        alert("Please login to save movies to your profile!");
+        return;
+    }
+    
     try {
         await db.collection("users").doc(user.uid).collection("watched").doc(movie.id.toString()).set({
             title: movie.title,
-            status: status,
+            status: status, // 'liked', 'disliked', or 'watchlist'
             poster: movie.poster_path,
+            rating: movie.vote_average,
+            id: movie.id,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
-        alert("Saved to your profile!");
+        alert(`Successfully added to ${status}!`);
     } catch (e) {
-        alert("Error: " + e.message);
+        console.error("Firestore Error:", e);
+        alert("Database Error: " + e.message);
     }
 }
